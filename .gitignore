@@ -21,3 +21,6 @@ eval_runs/
 
 # tau2-bench embedding cache (semantic retrieval)
 data/.embeddings_cache/
+
+# Per-agent hive metadata (fork URL + deploy key path)
+.hive/

@@ -35,6 +35,7 @@ Diagnostic signals reference fields in `traces/latest.json`, which is written af
 
 **History:**
 - 2026-04-21: 69/73 failures (94%) at baseline
+- 2026-04-22: 6/8 failures on lite (brianbot8, sha=8b809e5) after tool_selection catalog hint. P1 still dominant; 2 debit-card-family misses (tasks 087, 091) expose that the catalog is credit-card-centric — expand to domain dimensions next.
 
 ---
 
@@ -71,6 +72,7 @@ Diagnostic signals reference fields in `traces/latest.json`, which is written af
 
 **History:**
 - 2026-04-21: 2 primary + 123 secondary arg-mismatch events at baseline
+- 2026-04-22: 0 primary P2 events on lite (brianbot8, sha=8b809e5) after AGENT_INSTRUCTION block spelled out the `call_discoverable_agent_tool` outer-field contract (`agent_tool_name` + `arguments`).
 
 ---
 
@@ -103,3 +105,4 @@ Diagnostic signals reference fields in `traces/latest.json`, which is written af
 
 **History:**
 - 2026-04-21: 2 primary + 18 max_steps events at baseline
+- 2026-04-22: 2 primary P4 events on lite (brianbot8, sha=8b809e5). Straggler observation: lite wall time is gated by the single slowest task under `max_concurrency=8`. On this run the 3 longest failures (task_091 ~26min, task_017 ~12min, task_087 ~12min) dwarfed typical passing-task duration. P4 discipline compresses iteration time, not just score.

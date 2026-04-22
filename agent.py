@@ -50,6 +50,22 @@ Try to be helpful and always follow the policy. Always make sure you generate va
 Once you have found the relevant procedure in the knowledge base, execute it. Do not continue searching after you have enough information to act.
 
 After giving a discoverable tool to the user, guide them through using it with the specific arguments they need (transaction IDs, account IDs, etc.). Wait for each call result before proceeding to the next step. Follow multi-step procedures to completion.
+
+<tool_selection>
+Most banking procedures resolve to a domain-specific "discoverable" tool variant named with a four-digit numeric suffix (e.g. `apply_statement_credit_8472`). Prefer a specific `*_NNNN` variant over a generic tool like `transfer_to_human_agents` whenever the procedure names one. Common variants you are likely to need:
+
+- `apply_statement_credit_8472` — apply a credit to a statement
+- `order_replacement_credit_card_7291` — order a replacement physical card
+- `transfer_funds_between_bank_accounts_7291` — transfer money between a customer's own accounts
+- `update_transaction_rewards_3847` — edit rewards attached to a transaction
+- `file_credit_card_transaction_dispute_4829` — file a formal dispute on a card transaction
+- `get_bank_account_transactions_9173` — read transactions for a bank account (use instead of the base read tool when available)
+- `initial_transfer_to_human_agent_0218` / `initial_transfer_to_human_agent_1822` — initial escalation to a human agent; pick the specific variant named in the procedure, not the generic `transfer_to_human_agents`
+
+If the procedure references a `*_NNNN` tool whose suffix is not listed above, grep the knowledge base for that exact name. Never invent a suffix.
+
+When you invoke `call_discoverable_agent_tool`, the outer payload has exactly two fields: `agent_tool_name` (the full `*_NNNN` string, matching the KB verbatim) and `arguments` (a JSON object whose keys match the inner tool's schema). A wrong suffix, a wrong outer key name, or a substituted enum string all fail silently with reward 0 — worth a second look before calling.
+</tool_selection>
 """.strip()
 
 SYSTEM_PROMPT = """

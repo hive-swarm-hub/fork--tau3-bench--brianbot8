@@ -52,15 +52,9 @@ Once you have found the relevant procedure in the knowledge base, execute it. Do
 After giving a discoverable tool to the user, guide them through using it with the specific arguments they need (transaction IDs, account IDs, etc.). Wait for each call result before proceeding to the next step. Follow multi-step procedures to completion.
 
 <tool_selection>
-Every banking procedure that mutates state (applies credit, transfers money, orders a card, disputes a charge, changes card status, closes an account, etc.) resolves to a discoverable `_NNNN` tool. Using one requires THREE steps, in this exact order — do not combine them, do not skip any:
+Banking procedures almost always resolve to a domain-specific "discoverable" tool variant named `<verb>_<object>_NNNN` (e.g. `apply_statement_credit_8472`). Before calling any tool, assume an `_NNNN` variant exists for your procedure and grep the knowledge base to find the exact suffix. Do not fall back to a generic tool (`transfer_to_human_agents`, base read tools) if a specific variant is named in the procedure.
 
-1. IDENTIFY the tool's full name. Banking tools follow `<verb>_<object>_NNNN` (e.g. `apply_statement_credit_8472`). Grep the knowledge base for the exact suffix the procedure names. Never invent a suffix, never fall back to a generic tool (`transfer_to_human_agents`, base read tools) if a specific variant is named.
-
-2. UNLOCK by calling `unlock_discoverable_agent_tool` with `agent_tool_name` set to the full `_NNNN` string. THIS IS THE STEP MOST OFTEN SKIPPED. Without a successful unlock, step 3 silently returns reward 0 — it looks like the tool ran but the environment did not accept it. If you are about to call a discoverable tool and have not yet unlocked it this session, unlock it first.
-
-3. CALL `call_discoverable_agent_tool` with `agent_tool_name` = the same full `_NNNN` string (matching the KB verbatim) and `arguments` = a JSON object whose keys match the inner tool's schema. When an argument is an enum, grep the KB for the exact enum string before sending — do not paraphrase or abbreviate. A wrong suffix, wrong outer key name, or substituted enum string all fail silently with reward 0.
-
-Expect variants along these dimensions. When the user's request touches any of these, go to step 1 (grep the KB for the exact suffix):
+Expect variants along these dimensions. When the user's request touches any of these, grep the KB for the exact suffix before acting:
 
 Card operations
 - credit card: activate, freeze / unfreeze, order replacement (`order_replacement_credit_card_7291`), change PIN, close (`close_credit_card_account_7834`), file transaction dispute (`file_credit_card_transaction_dispute_4829`)
@@ -79,6 +73,8 @@ Escalation
 - initial human handoff uses a scenario-specific variant like `initial_transfer_to_human_agent_0218` or `initial_transfer_to_human_agent_1822` — pick the one the procedure names, not the generic `transfer_to_human_agents`.
 
 The lists above are partial. If the procedure references an `_NNNN` tool whose suffix is not shown, grep the KB for that exact name. Never invent a suffix.
+
+When you invoke `call_discoverable_agent_tool`, the outer payload has exactly two fields: `agent_tool_name` (the full `*_NNNN` string, matching the KB verbatim) and `arguments` (a JSON object whose keys match the inner tool's schema). A wrong suffix, a wrong outer key name, or a substituted enum string all fail silently with reward 0. When an argument is an enum, grep the KB for the exact enum string before sending — do not paraphrase or abbreviate.
 </tool_selection>
 """.strip()
 

@@ -24,3 +24,6 @@ data/.embeddings_cache/
 
 # Per-agent hive metadata (fork URL + deploy key path)
 .hive/
+
+# Per-agent private blog-notes journal (not shared with swarm)
+NOTES_brianbot8.md

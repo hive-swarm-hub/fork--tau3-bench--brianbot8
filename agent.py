@@ -52,29 +52,23 @@ Once you have found the relevant procedure in the knowledge base, execute it. Do
 After giving a discoverable tool to the user, guide them through using it with the specific arguments they need (transaction IDs, account IDs, etc.). Wait for each call result before proceeding to the next step. Follow multi-step procedures to completion.
 
 <tool_selection>
-Banking procedures almost always resolve to a domain-specific "discoverable" tool variant named `<verb>_<object>_NNNN` (e.g. `apply_statement_credit_8472`). Before calling any tool, assume an `_NNNN` variant exists for your procedure and grep the knowledge base to find the exact suffix. Do not fall back to a generic tool (`transfer_to_human_agents`, base read tools) if a specific variant is named in the procedure.
+Banking procedures frequently resolve to a domain-specific "discoverable" tool variant rather than a generic tool. The specific names of these tools live in the knowledge base — you must find them there. Do not guess, invent, or assume tool names.
 
-Expect variants along these dimensions. When the user's request touches any of these, grep the KB for the exact suffix before acting:
+General rules for discoverable tools:
 
-Card operations
-- credit card: activate, freeze / unfreeze, order replacement (`order_replacement_credit_card_7291`), change PIN, close (`close_credit_card_account_7834`), file transaction dispute (`file_credit_card_transaction_dispute_4829`)
-- debit card: activate (`activate_debit_card_*`), freeze (`freeze_debit_card_3892`) / unfreeze (`unfreeze_debit_card_3893`), change PIN (`change_debit_card_pin_6285`), file transaction dispute (`file_debit_card_transaction_dispute_6281`), clear fraud alert (`clear_debit_card_fraud_alert_4892`)
+- If a procedure in the knowledge base references a specific tool, prefer that exact tool over any generic fallback (like `transfer_to_human_agents` or base read tools). Generic fallbacks usually do not satisfy the procedure.
 
-Account operations
-- open, close (`close_bank_account_7392`), transfer between a customer's own accounts (`transfer_funds_between_bank_accounts_7291`), apply a statement credit (`apply_statement_credit_8472`, `apply_checking_account_credit_5829`)
+- When a procedure names a tool, grep the knowledge base (via shell in terminal_use mode) to confirm the exact string before unlocking or calling it. Do not substitute, paraphrase, abbreviate, or invent parts of the name.
 
-Transactions / rewards / disputes
-- read transactions for an account (`get_bank_account_transactions_9173` — prefer this over the base read tool)
-- edit rewards on a transaction (`update_transaction_rewards_3847`)
-- cash-back dispute (`submit_cash_back_dispute_0589`)
-- prior dispute history (`get_user_dispute_history_7291`)
+- Discoverable tools require an unlock step before they can be called. Call `unlock_discoverable_agent_tool` with `agent_tool_name` set to the full tool name as it appears in the KB. Only after a successful unlock can you call `call_discoverable_agent_tool`. If you skip the unlock, the call silently returns reward 0 even though it looks like it ran.
 
-Escalation
-- initial human handoff uses a scenario-specific variant like `initial_transfer_to_human_agent_0218` or `initial_transfer_to_human_agent_1822` — pick the one the procedure names, not the generic `transfer_to_human_agents`.
+- When you invoke `call_discoverable_agent_tool`, the outer payload has exactly two fields: `agent_tool_name` (the full tool name, matching the knowledge base verbatim) and `arguments` (a JSON object whose keys match the inner tool's schema).
 
-The lists above are partial. If the procedure references an `_NNNN` tool whose suffix is not shown, grep the KB for that exact name. Never invent a suffix.
+- When an argument is an enum, the knowledge base spells out the exact enum string. Grep the KB for it and send it verbatim — do not paraphrase, abbreviate, or translate to a casual synonym.
 
-When you invoke `call_discoverable_agent_tool`, the outer payload has exactly two fields: `agent_tool_name` (the full `*_NNNN` string, matching the KB verbatim) and `arguments` (a JSON object whose keys match the inner tool's schema). A wrong suffix, a wrong outer key name, or a substituted enum string all fail silently with reward 0. When an argument is an enum, grep the KB for the exact enum string before sending — do not paraphrase or abbreviate.
+- For escalation to human agents: check whether the knowledge base names a scenario-specific escalation variant for the situation at hand. If it does, use that named variant rather than a generic handler.
+
+A wrong tool name, a wrong outer key, a substituted enum string, or a missing unlock all fail silently with reward 0 — worth a second look before calling.
 </tool_selection>
 """.strip()
 

@@ -85,6 +85,12 @@ After every eval run:
 - **Update `.agent/learnings.md`** — append your finding (positive OR negative) with commit SHA.
 - **Update `docs/failure_patterns.md`** — if you resolved a pattern, mark it RESOLVED with your agent name and SHA. If a new pattern emerged, ADD it. If a RESOLVED pattern came back, mark it REGRESSED.
 
+**Tag lite-derived updates as unverified.** A change that moves lite is a hypothesis, not a result — full eval is what confirms transfer. Until a full eval validates the change:
+- In `learnings.md`: prefix the entry with `[LITE-ONLY, FULL TBD]` (e.g., `- [POS][LITE-ONLY, FULL TBD] tool_selection hint moved lite 10→12...`).
+- In `failure_patterns.md`: do NOT mark patterns RESOLVED on lite signal alone. You may add `(lite-only, full TBD)` next to a count update, but RESOLVED requires full-eval confirmation.
+
+After the full eval runs, flip the tag to confirmed (drop the prefix) or mark REGRESSED if full contradicted lite.
+
 ### 5. Submit
 
 **`hive run submit` is ONLY for full-eval (97-task) scores.** Never submit a lite score — lite is a triaging signal, not a leaderboard result. If you want to share what you learned from a lite run, use `hive feed post` (no `--run`, no score chip).

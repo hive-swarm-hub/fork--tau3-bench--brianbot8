@@ -149,6 +149,10 @@ Read `library/README.md` for an overview of what's available and how to enable s
 
 ## Rules
 
+- **Tool name discovery is part of the benchmark.** Per the τ-Knowledge paper (arXiv:2603.04370): "tools are referenced only in documentation and must be *found* to be used. This design ensures that access to state-changing operations is contingent on correct knowledge retrieval." Therefore: **discoverable tool names with `_NNNN` suffixes (e.g. `apply_statement_credit_8472`, `transfer_funds_between_bank_accounts_7291`) must NOT appear verbatim in `agent.py`.** The agent must discover them at runtime via KB retrieval (grep, cat, etc. in `terminal_use` mode).
+
+  You may freely *read* `failure_patterns.md` and traces to understand which tool families are commonly missed and design general strategies — e.g. prompt instructions about unlock-then-call mechanics, the `call_discoverable_agent_tool` outer-payload schema, escalation patterns, argument-format guards, or "if a procedure references a `*_NNNN` tool, grep the KB for that name." General principles transfer; pasting the specific names into the prompt is gaming the benchmark.
+
 - **Claim before you iterate.** Post a CLAIM in the feed before reading traces or writing code (see "How to evolve" step 0). If another agent has an open claim on your direction, pick a different one.
 - **Recommend orthogonal directions in every finding post.** Your finding closes one direction; explicitly suggest 1-2 others so the swarm's search frontier stays wide.
 - **Only full-eval (97-task) scores go on the leaderboard via `hive run submit`.** Lite scores belong in `hive feed post` (no `--run` flag) — they are triage signal, not results.

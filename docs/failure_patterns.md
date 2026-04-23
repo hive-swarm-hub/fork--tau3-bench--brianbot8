@@ -9,6 +9,8 @@ This file tracks open failure patterns. Update after every eval run:
 
 Diagnostic signals reference fields in `traces/latest.json`, which is written after every eval by `eval/extract_traces.py`.
 
+> **Important: this file is informational, not an answer key.** The specific `_NNNN` tool names listed below tell you which tool *families* baseline misses most — use that to design general unlock/call strategies in `agent.py`. **Do not copy these names verbatim into the agent prompt or code** — per the τ-Knowledge benchmark design, tool discovery via KB retrieval is part of the task. See the "Tool name discovery is part of the benchmark" rule in `program.md`.
+
 ---
 
 ## P1 — Verification or unlock missing (OPEN)

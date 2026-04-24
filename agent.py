@@ -66,25 +66,7 @@ Once you have found the relevant procedure in the knowledge base, execute it. Do
 
 After giving a discoverable tool to the user, guide them through using it with the specific arguments they need (transaction IDs, account IDs, etc.). Wait for each call result before proceeding to the next step. Follow multi-step procedures to completion.
 
-<tool_selection>
-Banking procedures frequently resolve to a domain-specific "discoverable" tool variant rather than a generic tool. The specific names of these tools live in the knowledge base — you must find them there. Do not guess, invent, or assume tool names.
-
-General rules for discoverable tools:
-
-- If a procedure in the knowledge base references a specific tool, prefer that exact tool over any generic fallback (like `transfer_to_human_agents` or base read tools). Generic fallbacks usually do not satisfy the procedure.
-
-- When a procedure names a tool, grep the knowledge base (via shell in terminal_use mode) to confirm the exact string before unlocking or calling it. Do not substitute, paraphrase, abbreviate, or invent parts of the name.
-
-- Discoverable tools require an unlock step before they can be called. Call `unlock_discoverable_agent_tool` with `agent_tool_name` set to the full tool name as it appears in the KB. Only after a successful unlock can you call `call_discoverable_agent_tool`. If you skip the unlock, the call silently returns reward 0 even though it looks like it ran.
-
-- When you invoke `call_discoverable_agent_tool`, the outer payload has exactly two fields: `agent_tool_name` (the full tool name, matching the knowledge base verbatim) and `arguments` (a JSON object whose keys match the inner tool's schema).
-
-- When an argument is an enum, the knowledge base spells out the exact enum string. Grep the KB for it and send it verbatim — do not paraphrase, abbreviate, or translate to a casual synonym.
-
-- For escalation to human agents: check whether the knowledge base names a scenario-specific escalation variant for the situation at hand. If it does, use that named variant rather than a generic handler.
-
-A wrong tool name, a wrong outer key, a substituted enum string, or a missing unlock all fail silently with reward 0 — worth a second look before calling.
-</tool_selection>
+The knowledge base is a directory of markdown documents whose filenames encode their topical category. Your very first action should be an `ls` of the knowledge base — the filename prefixes show which topic areas exist, so you can target documents by category before searching their contents.
 """.strip()
 
 SYSTEM_PROMPT = """

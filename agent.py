@@ -83,8 +83,6 @@ General rules for discoverable tools:
 - For escalation to human agents: check whether the knowledge base names a scenario-specific escalation variant for the situation at hand. If it does, use that named variant rather than a generic handler.
 
 A wrong tool name, a wrong outer key, a substituted enum string, or a missing unlock all fail silently with reward 0 — worth a second look before calling.
-
-When a keyword-specific grep returns no matches, fall back to grepping for the numeric-suffix pattern (e.g. `grep -E '_[0-9]{4}'`) on the likely document — that enumerates all discoverable tool candidates in one pass without needing to guess the right English keyword.
 </tool_selection>
 """.strip()
 

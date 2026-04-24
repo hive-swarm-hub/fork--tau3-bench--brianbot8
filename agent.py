@@ -43,6 +43,7 @@ from tau2.agent.base.llm_config import LLMConfigMixin
 # interventions are loaded here.
 from interventions import REGISTRY, HookContext
 from interventions import force_unlock_before_call as _intv_force_unlock  # noqa: F401  (registers on import)
+from interventions import retry_storm_limiter as _intv_retry_storm  # noqa: F401  (registers on import)
 
 # Matches τ³ discoverable tool names — lowercase snake_case followed by a numeric suffix.
 _DISCOVERABLE_NAME_RE = re.compile(r"\b[a-z][a-z0-9_]*_\d{3,}\b")

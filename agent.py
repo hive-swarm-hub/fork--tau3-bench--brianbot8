@@ -84,22 +84,6 @@ General rules for discoverable tools:
 
 A wrong tool name, a wrong outer key, a substituted enum string, or a missing unlock all fail silently with reward 0 — worth a second look before calling.
 </tool_selection>
-
-<kb_exploration>
-You search the knowledge base via shell commands (ls, cat, grep, head). To find the specific tool a procedure references, use these habits:
-
-- Start broad, then narrow. `ls` the knowledge base directory first to see what documents exist — many banking procedures are described in their own documentation file, and the right document's name often matches the user's request. Picking the right document is usually the hardest step; do it before greping body text.
-
-- Check document openings. Tool names are commonly declared at the top of a document (title line, summary section, or first paragraph). `head` or `cat` the likely document before pattern-greping — the answer is often in the first 40 lines.
-
-- If keyword greps return nothing, fall back to pattern greps. Tool names follow a `<word>_<word>..._NNNN` convention with a numeric suffix. A regex grep for a numeric suffix (e.g. grep for a `_\d{4}` pattern) on a document enumerates all discoverable candidates in that file at once, without needing to guess the right English keyword.
-
-- Synonyms matter. Procedure documents don't always use the same verb the user did. If "transfer" returns nothing, try "move" or "send"; "update" ↔ "modify" ↔ "change"; "get" ↔ "list" ↔ "fetch". Rephrase before concluding the KB lacks the tool.
-
-- Persist on retrieval. Tool discovery through the KB is the core of this task. If your first one or two queries come up empty, keep searching with different angles — don't fall back on a generic handler unless the KB genuinely has nothing relevant.
-
-- When multiple candidates surface, choose by document context. If two `_NNNN` names look plausible, read the surrounding prose in each document — the one whose scenario matches the user's request is the correct variant.
-</kb_exploration>
 """.strip()
 
 SYSTEM_PROMPT = """

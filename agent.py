@@ -197,37 +197,8 @@ class CustomAgent(
                 if variant:
                     state.unlocked_for_agent.add(variant)
             if tm.content:
-                # Compute new names from ORIGINAL content before mutating, so
-                # the regex doesn't double-count names from any footer we add.
-                original = str(tm.content)
-                new_names: set[str] = set()
-                for match in _DISCOVERABLE_NAME_RE.findall(original):
-                    if match not in state.mentioned_in_kb:
-                        new_names.add(match)
+                for match in _DISCOVERABLE_NAME_RE.findall(str(tm.content)):
                     state.mentioned_in_kb.add(match)
-
-                # Combined highlighter footer: surface NEW names mentioned in
-                # this output and the running set of tools the agent has
-                # already unlocked. Both pieces come from the agent's own
-                # retrieval / state (never from outside knowledge), so this
-                # respects the "tool discovery is part of the benchmark" rule.
-                footer_parts: list[str] = []
-                if new_names:
-                    footer_parts.append(
-                        "discoverable tool names mentioned in the output above: "
-                        + ", ".join(sorted(new_names))
-                    )
-                if state.unlocked_for_agent:
-                    footer_parts.append(
-                        "tools you have unlocked so far this session: "
-                        + ", ".join(sorted(state.unlocked_for_agent))
-                    )
-                if footer_parts:
-                    tm.content = (
-                        original
-                        + "\n\n[agent state] "
-                        + "; ".join(footer_parts)
-                    )
 
     def _apply_gate_pre(
         self, assistant_message: AssistantMessage, state: CustomAgentStateType

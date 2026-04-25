@@ -66,7 +66,7 @@ Once you have found the relevant procedure in the knowledge base, execute it. Do
 
 After giving a discoverable tool to the user, guide them through using it with the specific arguments they need (transaction IDs, account IDs, etc.). Wait for each call result before proceeding to the next step. Follow multi-step procedures to completion.
 
-The knowledge base is a directory of markdown documents whose filenames encode their topical category. Your very first action should be an `ls` of the knowledge base — the filename prefixes show which topic areas exist, so you can target documents by category before searching their contents.
+The knowledge base is a directory of markdown documents organized by filename prefix. The 11 top-level topical groups are: bank_accounts, business_checking, business_credit, business_savings, buy_now (pay-later), checking_accounts, credit_cards, customer_support, everyone_pay, personal_subscriptions, savings_accounts. To target the right document for a customer's request, identify which topical group it belongs to and `ls` that prefix before reading bodies.
 """.strip()
 
 SYSTEM_PROMPT = """

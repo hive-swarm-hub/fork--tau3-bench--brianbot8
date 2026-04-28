@@ -44,6 +44,7 @@ from tau2.agent.base.llm_config import LLMConfigMixin
 from interventions import REGISTRY, HookContext
 from interventions import force_unlock_before_call as _intv_force_unlock  # noqa: F401  (registers on import)
 from interventions import retry_storm_limiter as _intv_retry_storm  # noqa: F401  (registers on import)
+from interventions.kb_cross_reference import annotate as _kb_xref_annotate
 
 # Matches τ³ discoverable tool names — lowercase snake_case followed by a numeric suffix.
 _DISCOVERABLE_NAME_RE = re.compile(r"\b[a-z][a-z0-9_]*_\d{3,}\b")
@@ -91,6 +92,8 @@ class CustomAgentState(BaseModel):
     # matched back to the call they answer.
     pending_calls: dict[str, dict] = Field(default_factory=dict)
     intervention_log: list[dict] = Field(default_factory=list)
+    # Persistent de-dup for kb_cross_reference plugin (set of refs already surfaced).
+    kb_surfaced_refs: set[str] = Field(default_factory=set)
 
     class Config:
         arbitrary_types_allowed = True
@@ -199,6 +202,13 @@ class CustomAgent(
             if tm.content:
                 for match in _DISCOVERABLE_NAME_RE.findall(str(tm.content)):
                     state.mentioned_in_kb.add(match)
+
+            # kb_cross_reference plugin (upstream-shipped): for shell tool
+            # results only, append up to 3 unread KB cross-references the
+            # plugin extracts via regex from the tool output.
+            log = _kb_xref_annotate(tm, pending, state)
+            if log is not None:
+                state.intervention_log.append(log)
 
     def _apply_gate_pre(
         self, assistant_message: AssistantMessage, state: CustomAgentStateType

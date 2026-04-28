@@ -19,6 +19,7 @@ A small registry + plugin system for intercepting tool calls. Interventions fire
 | `interventions/prefer_discoverable_reads.py` | Intervention J (separate file). When agent calls a base read tool that has a discoverable variant, rewrites to unlock the variant instead. |
 | `interventions/verify_before_mutate.py` | Intervention K. Blocks any mutation tool call until `log_verification` has fired. |
 | `interventions/shell_output_parser.py` | Helper — not an intervention. Parses `ls`/`cat`/`grep` output into structured chunks for other interventions that consume KB text in terminal_use mode. |
+| `interventions/kb_cross_reference.py` | `tool_result` hook + public `annotate()` helper. After every shell tool result, scans for markdown filename mentions and short quoted "see also" / "per" anchors, then appends up to 3 unread cross-references to the tool message content. Name-agnostic (no `_NNNN` tool names); persistent de-dup via `state.kb_surfaced_refs: set[str]`. Targets the P1 single-doc-stop failure pattern. |
 
 ### How to enable
 
@@ -40,6 +41,17 @@ for intv in REGISTRY.for_hook("gate_pre"):
 ```
 
 See `interventions/banking.py` for real examples of how each rule is structured.
+
+For `tool_result` plugins like `kb_cross_reference`, you can either route through `REGISTRY.for_hook("tool_result")` symmetrically with `gate_pre`, or call the plugin's public helper inline. The inline path is one import + one call:
+
+```python
+from interventions.kb_cross_reference import annotate
+# In CustomAgentState: kb_surfaced_refs: set[str] = Field(default_factory=set)
+# In _track_state, per tool message:
+log = annotate(tm, pending, state)
+if log is not None:
+    state.intervention_log.append(log)  # if you keep one
+```
 
 ### Warnings
 

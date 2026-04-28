@@ -58,7 +58,7 @@ def force_unlock_before_call(ctx: HookContext) -> Optional[HookResult]:
         return HookResult(
             drop=True,
             drop_note=(
-                f"Cannot call `{proposed_name}` — it has not been unlocked yet. "
+                f"[force_unlock fired] Cannot call `{proposed_name}` — it has not been unlocked yet. "
                 f"First call unlock_discoverable_agent_tool(agent_tool_name='{proposed_name}'), "
                 f"then retry the call next turn."
             ),
@@ -75,7 +75,7 @@ def force_unlock_before_call(ctx: HookContext) -> Optional[HookResult]:
         drop=True,
         replace_with=unlock_call,
         drop_note=(
-            f"Rewriting: before I can call `{proposed_name}` I need to unlock it. "
+            f"[force_unlock fired] Rewriting: before I can call `{proposed_name}` I need to unlock it. "
             f"Unlocking now; next turn I'll re-issue the call via call_discoverable_agent_tool."
         ),
         log={"intervention": "force_unlock", "case": "rewrite_to_unlock", "proposed": proposed_name},

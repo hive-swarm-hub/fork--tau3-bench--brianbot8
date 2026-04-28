@@ -80,7 +80,7 @@ def retry_storm_limiter(ctx: HookContext) -> Optional[HookResult]:
     return HookResult(
         drop=True,
         drop_note=(
-            f"Blocked: you have already called `{proposed_name}` with these exact "
+            f"[retry_storm fired] Blocked: you have already called `{proposed_name}` with these exact "
             f"arguments {prev + 1} times in this conversation. The previous calls "
             "did not produce the expected result. Reconsider the arguments — "
             "check the knowledge base for required fields, value formats, and enum "
